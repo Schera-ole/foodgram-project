@@ -1,0 +1,20 @@
+<ul class="tags">
+    {% load main_filters %}
+    {% with filter_values=request.GET|get_filter_values %}
+    {% for tag in all_tags %}
+    <li class="tags__item">
+        {% if tag.0 == 'breakfast' %}
+        <a id="{{tag.0}}" class="tags__checkbox tags__checkbox_style_orange {% if tag.0 in filter_values %} tags__checkbox_active {% endif %}" href="?{{ request|get_filter_link:tag}}"></a>
+        <span class="tags__label">Завтрак</span>
+        {% elif tag.0 == 'lunch' %}
+        <a id="lunch" class="tags__checkbox tags__checkbox_style_green {% if tag.0 in filter_values %} tags__checkbox_active {% endif %}" href="?{{ request|get_filter_link:tag}}"></a>
+        <span class="tags__label">Обед</span>
+        {% elif tag.0 == 'dinner' %}
+        <a id="dinner" class="tags__checkbox tags__checkbox_style_purple {% if tag.0 in filter_values %} tags__checkbox_active {% endif %}" href="?{{ request|get_filter_link:tag}}"></a>
+        <span class="tags__label">Ужин</span>
+        {% endif %}
+    </li>
+    {% endfor %}
+    {% endwith %}
+
+</ul>

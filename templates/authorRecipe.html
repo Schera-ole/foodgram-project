@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Рецепты</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'pages/index.css' %}">
+</head>
+<body class="body">
+  <header class="header">
+    {% include 'nav.html' %}
+  </header>
+    <main class="main container">
+        {% csrf_token %}
+        <div class="main__header">
+            <h1 class="main__title">{{ author.username }}</h1>
+            {% include 'filter_tags.html' %}
+        </div>
+
+        <div class="author-subscribe" data-author="{{ author.pk }}">
+            {% if request.user.username != author.username %}
+            <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></p>
+            {% endif %}
+        </div>
+        <div class="card-list" >
+            {% for recipe in page %}
+        <div class="card" data-id="{{ recipe.id }}">
+            <a href="{{ recipe.pk }}" class="link" target="_blank"><img src="{{ recipe.image.url }}" alt="Какой-то текст" class="card__image"></a>
+            <div class="card__body">
+                <a class="card__title link" href="{{ recipe.pk }}" target="_blank">{{ recipe.title }}</a>
+                <ul class="card__items">
+                {% include 'tags.html' %}
+                </ul>
+                
+                <div class="card__items card__items_column">
+                    <p class="card__text"><span class="icon-time"></span> {{ recipe.time }} мин.</p>
+                    <p class="card__text"><span class="icon-user"></span> <a href="/{{ recipe.author.username }}" style="color: black">{{ recipe.author.username }}</a></p>
+                </div>
+
+            </div>
+            <div class="card__footer">
+                {% include 'shop_button.html' %}
+                {% include 'star_button.html' %}
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+    {% if page.has_other_pages %}
+    {% include "paginator.html" with items=page paginator=paginator%}
+    {% endif %}
+    </main>
+    {% include 'footer.html' %}
+
+<script src="{% static '/js/config/config.js' %}"></script>
+<script src="{% static '/js/components/MainCards.js' %}"></script>
+<script src="{% static '/js/components/Favorites.js' %}"></script>
+<script src="{% static '/js/components/Purchases.js' %}"></script>
+<script src="{% static '/js/components/Subscribe.js' %}"></script>
+<script src="{% static '/js/components/AuthorRecipe.js' %}"></script>
+<script src="{% static '/js/components/Header.js' %}"></script>
+<script src="{% static '/js/api/Api.js' %}"></script>
+<script src="{% static 'authorRecipe.js' %}"></script>
+
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Ошибка 500</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'pages/index.css' %}">
+</head>
+<body class="body">
+<header class="header">
+    {% include 'nav.html' %}
+</header>
+<main class="main container">
+    <div class="custom-center-block">
+            <h1>Ошибка 500</h1>
+            <p class="custom-text-block">Ошибка на сервере, попробуйте обновить страницу или обратиться позже</p>
+        <div class="custom-button-block">
+            <a href='/'><button class="button button_style_blue">Перейти на главную</button></a>
+        </div>
+    </div>
+</main>
+{% include 'footer.html' %}
+</body>
+</html>
