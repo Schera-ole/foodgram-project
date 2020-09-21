@@ -1,20 +1,12 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Мои подписки</title>
+{% extends 'base.html' %}
+{% block title %}Мои подписки{% endblock %}
+{% block static %}
     {% load static %}
-    <link rel="stylesheet" href="{% static 'pages/myFollow.css' %}">
-</head>
-<body class="body">
-<header class="header">
-    {% include 'nav.html' %}
-</header>
-{% csrf_token %}
+    <link rel="stylesheet" href="{% static 'pages/MyFollow.css' %}">
+{% endblock %}
+{% block content %}
 <main class="main container">
+    {% csrf_token %}
     <div class="main__header">
         <h1 class="main__title">Мои подписки</h1>
     </div>
@@ -58,8 +50,8 @@
     {% include "paginator.html" with items=page paginator=paginator%}
     {% endif %}
 </main>
-{% include 'footer.html' %}
-
+{% endblock %}
+{% block js %}
 <script src="{% static 'js/components/MainCards.js' %}"></script>
 
 <script src="{% static '/js/components/Subscribe.js' %}"></script>
@@ -70,5 +62,4 @@
         
 <script src="{% static 'js/api/Api.js' %}"></script>
 <script src="{% static 'myFollow.js' %}"></script>
-</body>
-</html>
+{% endblock %}

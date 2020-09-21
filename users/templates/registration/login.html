@@ -1,18 +1,10 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Войти на сайт</title>
+{% extends 'base.html' %}
+{% block title %}Войти на сайт{% endblock %}
+{% block static %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'pages/form.css' %}">
-</head>
-<body class="body">
-<header class="header">
-    {% include 'nav.html' %}
-</header>
+{% endblock %}
+{% block content %}
 <main class="main container">
     <div class="main__header">
         <h1 class="main__title">Войти на сайт</h1>
@@ -47,6 +39,4 @@
 
 
 </main>
-{% include 'footer.html' %}
-</body>
-</html>
+{% endblock %}

@@ -1,18 +1,10 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{ recipe.title }}</title>
+{% extends 'base.html' %}
+{% block title %}{{ recipe.title }}{% endblock %}
+{% block static %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'pages/single.css' %}">
-</head>
-<body class="body">
-<header class="header">
-{% include 'nav.html' %}
-</header>
+{% endblock %}
+{% block content %}
     <main class="main container">
         {% csrf_token %}
         <div class="single-card" data-id="{{ recipe.id }}" data-author="{{ recipe.author.id }}">
@@ -68,8 +60,8 @@
             </div>
         </div>
     </main>
-    {% include 'footer.html' %}
-
+    {% endblock %}
+{% block js %}
 <script src="{% static '/js/components/Purchases.js' %}"></script>
 <script src="{% static '/js/components/Favorites.js' %}"></script>
 <script src="{% static '/js/components/Subscribe.js' %}"></script>
@@ -84,6 +76,4 @@
 {% else %}
 <script src="{% static 'singlePageNotAuth.js' %}"></script>
 {% endif %}
-
-</body>
-</html>
+{% endblock %}

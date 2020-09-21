@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}Регистрация{% endblock %}</title>
+{% block static %}
+<!-- Загрузка статики -->
+{% endblock %}
+</head>
+<body class="body">
+<header class="header">
+{% block nav %}
+    {% include 'nav.html' %}
+{% endblock nav %}
+</header>
+{% block content %}
+<!-- Основное содержимое страницы -->
+{% endblock %}
+    {% include 'footer.html' %}
+{% block js %}
+<!-- Подгрузка js -->
+{% endblock %}
+</body>
+</html>

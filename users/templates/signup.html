@@ -1,26 +1,16 @@
-<!doctype html>
-<html lang="en">    
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Рецепты</title>
+{% extends 'base.html' %}
+{% block title %}Регистрация{% endblock %}
+{% block static %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'pages/form.css' %}">
-</head>
-<body class="body">
-<header class="header">
-</header>
-{% load user_filters %}
+{% endblock %}
+{% block content %}
 <main class="main container">
-
+    {% load user_filters %}
     <div class="main__header">
         <h1 class="main__title">Регистрация</h1>
     </div>
-
     <div class="form-container">
-
         {% if form.errors %}
             {% for error in form.errors %}
                 <span class="form__error">
@@ -50,7 +40,4 @@
         </form>
     </div>
 </main>
-
-{% include 'footer.html' %}
-</body>
-</html>
+{% endblock %}

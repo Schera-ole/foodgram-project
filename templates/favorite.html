@@ -1,19 +1,10 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Избранное</title>
+{% extends 'base.html' %}
+{% block title %}Избранное{% endblock %}
+{% block static %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'pages/index.css' %}">
-</head>
-<body class="body">
-<header class="header">
-    {% include 'nav.html' %}
-</header>
-
+{% endblock %}
+{% block content %}
     <main class="main container">
         {% csrf_token %}
         <div class="main__header">
@@ -45,16 +36,17 @@
             {% include "paginator.html" with items=page paginator=paginator%}
             {% endif %}
         </main>
-        {% include 'footer.html' %}
+{% endblock %}
+{% block js %}
 <script src="{% static 'js/components/MainCards.js' %}"></script>
 
 <script src="{% static '/js/components/Purchases.js' %}"></script>
-        
+<script src="{% static '/js/components/Favorites.js' %}"></script>
+
 <script src="{% static '/js/config/config.js' %}"></script>
 <script src="{% static '/js/components/CardList.js' %}"></script>
 <script src="{% static '/js/components/Header.js' %}"></script>
         
 <script src="{% static 'js/api/Api.js' %}"></script>
 <script src="{% static 'favorite.js' %}"></script>
-</body>
-</html>
+{% endblock %}
