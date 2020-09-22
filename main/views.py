@@ -9,7 +9,7 @@ from django.views.decorators.http import require_http_methods
 from django.urls import reverse
 
 
-from .extra import get_Q_objects_r, get_Q_objects_f, recipe_ingredient
+from .extra import get_Q_objects_f, get_Q_objects_r, recipe_ingredient
 from .forms import RecipeForm
 from .models import Ingredient, IngredientAmount, Favorite, Follow, Recipe, ShopList, User 
 
