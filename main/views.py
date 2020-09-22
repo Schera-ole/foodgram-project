@@ -2,25 +2,27 @@ import datetime as dt
 import json
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Count, Sum
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views.decorators.http import require_http_methods
 from django.urls import reverse
 
 
-from .models import Ingredient, IngredientAmount, Favorite, Follow, Recipe, ShopList, User 
+from .extra import get_Q_objects_r, get_Q_objects_f, recipe_ingredient
 from .forms import RecipeForm
+from .models import Ingredient, IngredientAmount, Favorite, Follow, Recipe, ShopList, User 
 
 
 def index(request):
     recipe_list = []
+    recipe_tmp = Recipe.objects.prefetch_related('author')
     if 'filters' in request.GET:
         filters = request.GET.getlist('filters')
-        q_objects = get_Q_objects(filters)
-        recipe_list = Recipe.objects.filter(q_objects).prefetch_related('author').order_by('-pub_date')
+        q_objects = get_Q_objects_r(filters)
+        recipe_list = recipe_tmp.filter(q_objects)
     else:
-        recipe_list = Recipe.objects.prefetch_related('author').order_by('-pub_date').all()
+        recipe_list = recipe_tmp.all()
     paginator = Paginator(recipe_list, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
@@ -119,9 +121,8 @@ def shoplist(request):
 @require_http_methods(['POST'])
 @login_required
 def add_shoplist(request):
-    # body_unicode = request.body.decode('utf-8')
     body = json.loads(request.body)
-    user_sl = get_object_or_404(User, username=request.user.username)
+    user_sl = get_object_or_404(User, username=request.user)
     recipe_sl = get_object_or_404(Recipe, pk = body['id'])
     ShopList.objects.get_or_create(user=user_sl, recipe=recipe_sl)
     return JsonResponse({'success': True}, safe=False)
@@ -129,7 +130,7 @@ def add_shoplist(request):
 
 @login_required
 def del_shoplist(request, recipe_id):
-    user_sl = get_object_or_404(User, username=request.user.username)
+    user_sl = get_object_or_404(User, username=request.user)
     recipe_sl = get_object_or_404(Recipe, pk=recipe_id)
     ShopList.objects.filter(user=user_sl, recipe=recipe_sl).delete()
     return redirect('shoplist')
@@ -137,12 +138,19 @@ def del_shoplist(request, recipe_id):
 
 @login_required
 def get_shoplist(request):
+    amount_dict = {}
     filename = 'shoplist.txt'
     content = ''
     users_recipe = ShopList.objects.filter(user=request.user)
-    for recipe in users_recipe:
-        amount = get_object_or_404(IngredientAmount, recipe=recipe.recipe)
-        content = content + f'{amount.ingredient.title} {amount.amount} {amount.ingredient.units}\n'
+    recipe = [recipe.recipe for recipe in users_recipe]
+    amount = (
+        IngredientAmount.objects.filter(recipe__in=recipe)
+        .values("ingredient__title", "ingredient__dimension")
+        .annotate(Sum("amount"))
+    )
+    for a in amount:
+        title, dimension, amount_sum = a.values()
+        content = content + f'{title} {amount_sum} {dimension}\n'
     response = HttpResponse(content, content_type='text/plain')
     response['Content-Disposition'] = f'attachment; filename={filename}'
     return response
@@ -151,12 +159,13 @@ def get_shoplist(request):
 def profile(request, username):
     user_profile = get_object_or_404(User, username=username)
     recipe_list = []
+    recipe_tmp = Recipe.objects.filter(author=user_profile).prefetch_related('author')
     if 'filters' in request.GET:
         filters = request.GET.getlist('filters')
-        q_objects = get_Q_objects(filters)
-        recipe_list = Recipe.objects.filter(author = user_profile).filter(q_objects)
+        q_objects = get_Q_objects_r(filters)
+        recipe_list = recipe_tmp.filter(q_objects)
     else:
-        recipe_list = Recipe.objects.filter(author = user_profile).prefetch_related('author').order_by('-pub_date')
+        recipe_list = recipe_tmp
     paginator = Paginator(recipe_list, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
@@ -174,16 +183,24 @@ def profile(request, username):
 def favorite(request):
     recipe_list = []
     recipe_favorite = []
+
+    '''
+    Отдельная фун-я т.к. тут запрос фильтруется по значению тега рецепта
+    '''
+
+    recipe_tmp = Favorite.objects.filter(user=request.user)
     if 'filters' in request.GET:
         filters = request.GET.getlist('filters')
-        q_objects = get_Q_objects(filters)
-        recipe_favorite = Favorite.objects.filter(user=request.user).filter(q_objects)
+        q_objects = get_Q_objects_f(filters)
+        recipe_favorite= recipe_tmp.filter(q_objects)
     else:
-        recipe_favorite = Favorite.objects.filter(user=request.user)
+        recipe_favorite = recipe_tmp
 
-    for i in reversed(recipe_favorite):
-        recipe_list.append(i.recipe)
-    
+    '''
+    До этого у нас объекты из таблицы Favorite, после - рецепты
+    '''
+    recipe_list = [i.recipe for i in recipe_favorite]
+
     paginator = Paginator(recipe_list, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
@@ -193,9 +210,8 @@ def favorite(request):
 @require_http_methods(['POST'])
 @login_required
 def add_favorite(request):
-    #body_unicode = request.body.decode('utf-8')
     body = json.loads(request.body)
-    user_favorite = get_object_or_404(User, username=request.user.username)
+    user_favorite = get_object_or_404(User, username=request.user)
     recipe_favorite = get_object_or_404(Recipe, pk = body['id'])
     Favorite.objects.get_or_create(user=user_favorite, recipe=recipe_favorite)
     return JsonResponse({'success': True}, safe=False)
@@ -204,7 +220,7 @@ def add_favorite(request):
 @require_http_methods(['DELETE'])
 @login_required
 def del_favorite(request, recipe_id):
-    user_favorite = get_object_or_404(User, username=request.user.username)
+    user_favorite = get_object_or_404(User, username=request.user)
     recipe_favorite = get_object_or_404(Recipe, pk=recipe_id)
     Favorite.objects.filter(user=user_favorite, recipe=recipe_favorite).delete()
     return JsonResponse({'success': True}, safe=False)
@@ -239,11 +255,10 @@ def follow(request):
 @require_http_methods(['POST'])
 @login_required
 def add_follow(request):
-    body_unicode = request.body.decode('utf-8')
-    body = json.loads(body_unicode)
+    body = json.loads(request.body)
     following = get_object_or_404(User, pk = body['id'])
-    if request.user.username != following.username:
-        follower = get_object_or_404(User, username=request.user.username)
+    if request.user != following:
+        follower = get_object_or_404(User, username=request.user)
         Follow.objects.get_or_create(user=follower, author=following)
     return JsonResponse({'success': True}, safe=False)
 
@@ -251,37 +266,16 @@ def add_follow(request):
 @require_http_methods(['DELETE'])
 @login_required
 def del_follow(request, author_id):
-    follower = get_object_or_404(User, username=request.user.username)
+    follower = get_object_or_404(User, username=request.user)
     following = get_object_or_404(User, pk=author_id)
     Follow.objects.filter(user=follower, author=following).delete()
     return JsonResponse({'success': True}, safe=False)
 
 
 def get_ingredient(request):
-    data = []
     find_ingredient=request.GET.get('query')
-    value = Ingredient.objects.filter(title__istartswith=find_ingredient)
-    for i in value:
-        data.append({'title':i.title, 'dimension':i.units})
+    data = list(Ingredient.objects.filter(title__istartswith=find_ingredient).values('title', 'dimension'))
     return JsonResponse(data, safe=False)
-
-
-def recipe_ingredient(request):
-    data = {}
-    for item in request.POST.items():
-        if 'nameIngredient' in item[0]:
-            name = item[1]
-        if 'valueIngredient' in item[0]:
-            value = item[1]
-            data[name] = value
-    return(data)
-
-
-def get_Q_objects(filter_tags):
-    q_objects = Q()
-    for f in filter_tags:
-        q_objects |= Q(tags__contains=f)
-    return q_objects
 
 
 def page_not_found(request, exception):

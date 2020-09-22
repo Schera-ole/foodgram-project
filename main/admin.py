@@ -9,7 +9,7 @@ class IngredientAmount_inline(admin.TabularInline):
 
 class IngredientAdmin(admin.ModelAdmin):
     inlines = (IngredientAmount_inline,)
-    list_display = ('pk', 'title', 'units',)
+    list_display = ('pk', 'title', 'dimension',)
 
 
 class RecipeAdmin(admin.ModelAdmin):

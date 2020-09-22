@@ -9,8 +9,7 @@
 
     <div class="main__header">
         <h1 class="main__title">Создание рецепта</h1>
-    </div>
-    
+    </div>    
     <div class="form-container">
         <form class="form" method="post" enctype="multipart/form-data">  
             {% csrf_token %}
@@ -102,14 +101,12 @@
             </div>
         </form>
     </div>
-
-
 </main>
 {% endblock %}
 {% block js %}
-<script src="{% static 'js/config/config.js' %}"></script>
-<script src="{% static 'js/components/Header.js' %}"></script>
-<script src="{% static 'js/utils/debouncing.js' %}"></script>
-<script src="{% static 'js/api/Api.js' %}"></script>
-<script src="{% static 'formRecipe.js' %}"></script>
+    <script src="{% static 'js/config/config.js' %}"></script>
+    <script src="{% static 'js/components/Header.js' %}"></script>
+    <script src="{% static 'js/utils/debouncing.js' %}"></script>
+    <script src="{% static 'js/api/Api.js' %}"></script>
+    <script src="{% static 'formRecipe.js' %}"></script>
 {% endblock %}

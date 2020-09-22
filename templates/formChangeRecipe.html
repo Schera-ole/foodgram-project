@@ -98,7 +98,7 @@
                 </div>
             </div>
             <div class="form__footer">
-                <button class="button button_style_blue">Сохранить</button> <a style="margin-left: 2.5em" href="/{{recipe.author}}/{{recipe.pk}}/delete" class="form__ingredient-link">Удалить</a>
+                <button class="button button_style_blue">Сохранить</button> <a style="margin-left: 2.5em" href="{% url 'del_recipe' username=recipe.author recipe_id=recipe.pk %}" class="form__ingredient-link">Удалить</a>
             </div>
         </form>
     </div>
@@ -106,9 +106,9 @@
 </main>
 {% endblock %}
 {% block js %}
-<script src="{% static 'js/config/config.js' %}"></script>
-<script src="{% static 'js/components/Header.js' %}"></script>
-<script src="{% static 'js/utils/debouncing.js' %}"></script>
-<script src="{% static 'js/api/Api.js' %}"></script>
-<script src="{% static 'formRecipe.js' %}"></script>
+    <script src="{% static 'js/config/config.js' %}"></script>
+    <script src="{% static 'js/components/Header.js' %}"></script>
+    <script src="{% static 'js/utils/debouncing.js' %}"></script>
+    <script src="{% static 'js/api/Api.js' %}"></script>
+    <script src="{% static 'formRecipe.js' %}"></script>
 {% endblock %}

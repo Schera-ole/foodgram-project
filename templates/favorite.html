@@ -14,15 +14,15 @@
         <div class="card-list">
             {% for recipe in page %}
             <div class="card" data-id="{{ recipe.pk }}">
-                    <a href="/{{ recipe.author.username }}/{{ recipe.pk }}/" class="link" target="_blank"><img src="{{ recipe.image.url }}" alt="Здесь должна быть картинка" class="card__image"></a>
+                    <a href="{% url 'recipe' username=recipe.author.username recipe_id=recipe.pk %}" class="link" target="_blank"><img src="{{ recipe.image.url }}" alt="Здесь должна быть картинка" class="card__image"></a>
                     <div class="card__body">
-                        <a class="card__title link" href="/{{ recipe.author.username }}/{{ recipe.pk }}/" target="_blank">{{ recipe.title }}</a>
+                        <a class="card__title link" href="{% url 'recipe' username=recipe.author.username recipe_id=recipe.pk %}" target="_blank">{{ recipe.title }}</a>
                         <ul class="card__items">
                             {% include 'tags.html' %}
                         </ul>
                         <div class="card__items card__items_column">
                             <p class="card__text"><span class="icon-time"></span> {{ recipe.time }} мин. </p>
-                            <p class="card__text"><span class="icon-user"></span> <a href="{{ recipe.author.username }}" style="color: black">{{ recipe.author.username }}</a></p>
+                            <p class="card__text"><span class="icon-user"></span> <a href="{% url 'profile' username=recipe.author.username %}" style="color: black">{{ recipe.author.username }}</a></p>
                         </div>
                     </div>
                     <div class="card__footer">
@@ -33,20 +33,20 @@
             </div>
     
             {% if page.has_other_pages %}
-            {% include "paginator.html" with items=page paginator=paginator%}
+                {% include "paginator.html" with items=page paginator=paginator%}
             {% endif %}
         </main>
 {% endblock %}
 {% block js %}
-<script src="{% static 'js/components/MainCards.js' %}"></script>
+    <script src="{% static 'js/components/MainCards.js' %}"></script>
 
-<script src="{% static '/js/components/Purchases.js' %}"></script>
-<script src="{% static '/js/components/Favorites.js' %}"></script>
+    <script src="{% static '/js/components/Purchases.js' %}"></script>
+    <script src="{% static '/js/components/Favorites.js' %}"></script>
 
-<script src="{% static '/js/config/config.js' %}"></script>
-<script src="{% static '/js/components/CardList.js' %}"></script>
-<script src="{% static '/js/components/Header.js' %}"></script>
+    <script src="{% static '/js/config/config.js' %}"></script>
+    <script src="{% static '/js/components/CardList.js' %}"></script>
+    <script src="{% static '/js/components/Header.js' %}"></script>
         
-<script src="{% static 'js/api/Api.js' %}"></script>
-<script src="{% static 'favorite.js' %}"></script>
+    <script src="{% static 'js/api/Api.js' %}"></script>
+    <script src="{% static 'favorite.js' %}"></script>
 {% endblock %}

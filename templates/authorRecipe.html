@@ -13,23 +13,23 @@
         </div>
 
         <div class="author-subscribe" data-author="{{ author.pk }}">
-            {% if request.user.username != author.username and request.user.is_authenticated %}
+            {% if request.user.is_authenticated and request.user.username != author.username %}
             <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></p>
             {% endif %}
         </div>
         <div class="card-list" >
             {% for recipe in page %}
         <div class="card" data-id="{{ recipe.id }}">
-            <a href="{{ recipe.pk }}" class="link" target="_blank"><img src="{{ recipe.image.url }}" alt="Какой-то текст" class="card__image"></a>
+            <a href="{% url 'recipe' username=author.username recipe_id=recipe.pk %}" class="link" target="_blank"><img src="{{ recipe.image.url }}" alt="Какой-то текст" class="card__image"></a>
             <div class="card__body">
-                <a class="card__title link" href="{{ recipe.pk }}" target="_blank">{{ recipe.title }}</a>
+                <a class="card__title link" href="{% url 'recipe' username=author.username recipe_id=recipe.pk %}" target="_blank">{{ recipe.title }}</a>
                 <ul class="card__items">
                 {% include 'tags.html' %}
                 </ul>
                 
                 <div class="card__items card__items_column">
                     <p class="card__text"><span class="icon-time"></span> {{ recipe.time }} мин.</p>
-                    <p class="card__text"><span class="icon-user"></span> <a href="/{{ recipe.author.username }}" style="color: black">{{ recipe.author.username }}</a></p>
+                    <p class="card__text"><span class="icon-user"></span> <a href="{% url 'profile' username=author.username %}" style="color: black">{{ recipe.author.username }}</a></p>
                 </div>
 
             </div>
@@ -42,18 +42,18 @@
         {% endfor %}
     </div>
     {% if page.has_other_pages %}
-    {% include "paginator.html" with items=page paginator=paginator%}
+        {% include "paginator.html" with items=page paginator=paginator%}
     {% endif %}
     </main>
-    {% endblock %}
-    {% block js %}
-<script src="{% static '/js/config/config.js' %}"></script>
-<script src="{% static '/js/components/MainCards.js' %}"></script>
-<script src="{% static '/js/components/Favorites.js' %}"></script>
-<script src="{% static '/js/components/Purchases.js' %}"></script>
-<script src="{% static '/js/components/Subscribe.js' %}"></script>
-<script src="{% static '/js/components/AuthorRecipe.js' %}"></script>
-<script src="{% static '/js/components/Header.js' %}"></script>
-<script src="{% static '/js/api/Api.js' %}"></script>
-<script src="{% static 'authorRecipe.js' %}"></script>
+{% endblock %}
+{% block js %}
+    <script src="{% static '/js/config/config.js' %}"></script>
+    <script src="{% static '/js/components/MainCards.js' %}"></script>
+    <script src="{% static '/js/components/Favorites.js' %}"></script>
+    <script src="{% static '/js/components/Purchases.js' %}"></script>
+    <script src="{% static '/js/components/Subscribe.js' %}"></script>
+    <script src="{% static '/js/components/AuthorRecipe.js' %}"></script>
+    <script src="{% static '/js/components/Header.js' %}"></script>
+    <script src="{% static '/js/api/Api.js' %}"></script>
+    <script src="{% static 'authorRecipe.js' %}"></script>
 {% endblock %}

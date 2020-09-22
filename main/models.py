@@ -9,7 +9,7 @@ TAGS_CHOICES = (('breakfast', 'Завтрак'), ('lunch', 'Обед'), ('dinner
 
 class Ingredient(models.Model):
     title = models.CharField(max_length=200)
-    units = models.CharField(max_length=200)
+    dimension = models.CharField(max_length=200)
 
     def __str__(self):
         return self.title
@@ -49,6 +49,9 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        ordering = ('-pub_date',)
 
 
 class Favorite(models.Model):
