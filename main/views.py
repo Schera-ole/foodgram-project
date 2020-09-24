@@ -143,11 +143,13 @@ def get_shoplist(request):
     content = ''
     users_recipe = ShopList.objects.filter(user=request.user)
     recipe = [recipe.recipe for recipe in users_recipe]
-    amount = (
-        IngredientAmount.objects.filter(recipe__in=recipe)
-        .values("ingredient__title", "ingredient__dimension")
-        .annotate(Sum("amount"))
-    )
+    amount = (IngredientAmount.objects.filter(
+        recipe__in=recipe
+        ).values(
+        'ingredient__title', 'ingredient__dimension'
+        ).annotate(
+        Sum('amount')
+        ))
     for a in amount:
         title, dimension, amount_sum = a.values()
         content = content + f'{title} {amount_sum} {dimension}\n'
@@ -183,11 +185,6 @@ def profile(request, username):
 def favorite(request):
     recipe_list = []
     recipe_favorite = []
-
-    '''
-    Отдельная фун-я т.к. тут запрос фильтруется по значению тега рецепта
-    '''
-
     recipe_tmp = Favorite.objects.filter(user=request.user)
     if 'filters' in request.GET:
         filters = request.GET.getlist('filters')
@@ -195,12 +192,10 @@ def favorite(request):
         recipe_favorite= recipe_tmp.filter(q_objects)
     else:
         recipe_favorite = recipe_tmp
-
-    '''
-    До этого у нас объекты из таблицы Favorite, после - рецепты
-    '''
+    
+    #До этого у нас объекты из таблицы Favorite, после - рецепты
+    
     recipe_list = [i.recipe for i in recipe_favorite]
-
     paginator = Paginator(recipe_list, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
@@ -231,12 +226,11 @@ def follow(request):
     author_recipes = {}
     counter = {}
     follow = Follow.objects.filter(user=request.user)
-    for i in follow:
-        recipe = Recipe.objects.filter(author=i.author)
-        author_recipes[i.author] = recipe
-        counter[i.author.username] = recipe.count()-3
-        if counter[i.author.username] < 0:
-            counter[i.author.username]= 0
+    f = [f.author for f in follow]
+    for i in f:
+        recipe = Recipe.objects.filter(author=i)
+        author_recipes[i] = recipe
+        counter[i.username] = max(0, i.recipe_author.count()-3)
     author_recipes = tuple(author_recipes.items())
     paginator = Paginator(author_recipes, 6)
     page_number = request.GET.get('page')
