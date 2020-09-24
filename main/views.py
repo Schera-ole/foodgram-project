@@ -238,7 +238,6 @@ def follow(request):
         'myFollow.html', {
             'page':page, 
             'paginator':paginator, 
-      #      'counter':counter
             }
         )
 
