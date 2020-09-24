@@ -223,16 +223,13 @@ def del_favorite(request, recipe_id):
 
 @login_required
 def follow(request):
-    author_recipes = {}
-    counter = {}
-    follow = Follow.objects.filter(user=request.user)
-    f = [f.author for f in follow]
-    for i in f:
-        recipe = Recipe.objects.filter(author=i)
-        author_recipes[i] = recipe
-        counter[i.username] = max(0, i.recipe_author.count()-3)
-    author_recipes = tuple(author_recipes.items())
-    paginator = Paginator(author_recipes, 6)
+    author = list(User.objects.filter(
+        following__user=request.user
+        ).annotate(
+        count = Count(
+        'recipe_author'
+        )))
+    paginator = Paginator(author, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
 
@@ -241,7 +238,7 @@ def follow(request):
         'myFollow.html', {
             'page':page, 
             'paginator':paginator, 
-            'counter':counter
+      #      'counter':counter
             }
         )
 

@@ -11,7 +11,7 @@
         <h1 class="main__title">Мои подписки</h1>
     </div>
     <div class="card-list">
-        {% for author, recipes in page %}
+        {% for author in page %}
         {% load main_filters %}
         <div class="card-user" data-author="{{ author.pk }}">
         <div class="card-user__header">
@@ -19,8 +19,8 @@
         </div>
         <div class="card-user__body">
             <ul class="card-user__items">
-                
-                {% for recipe in recipes|slice:":3" %}
+                {% for recipe in author.recipe_author.all|slice:":3" %}
+
                 <li class="card-user__item">
                     <div class="recipe">
                         <img src="{{ recipe.image.url }}" alt="здесь должна быть картинка" class="recipe__image">
@@ -30,8 +30,8 @@
                 </li>
                 {% endfor %}
                 <li class="card-user__item">
-                    {% if counter|get_item:author.username %}
-                        <a href="{% url 'profile' username=author.username %}" class="card-user__link link">Еще {{counter|get_item:author.username}} рецептов...</a>
+                    {% if author.count|add:"-3" > 0 %}
+                        <a href="{% url 'profile' username=author.username %}" class="card-user__link link">Еще {{ author.count|add:"-3" }} рецептов...</a>
                     {% else %}
                         <a href="{% url 'profile' username=author.username %}" class="card-user__link link">Страничка автора...</a>
                     {% endif %}
