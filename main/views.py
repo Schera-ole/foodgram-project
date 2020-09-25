@@ -223,11 +223,12 @@ def del_favorite(request, recipe_id):
 
 @login_required
 def follow(request):
-    author = list(User.objects.filter(
+    author = User.objects.filter(
         following__user=request.user
     ).annotate(
-        count = Count
-    ('recipe_author')))
+        count = Count(
+        'recipe_author'
+    ))
     paginator = Paginator(author, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
