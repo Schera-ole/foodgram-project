@@ -44,7 +44,7 @@ class Recipe(models.Model):
     pub_date = models.DateTimeField('date published', auto_now_add=True)
     tags = MultiSelectField(choices=TAGS_CHOICES)
     text = models.TextField()
-    time = models.DurationField(verbose_name='Время приготовления')
+    time = models.IntegerField(default=1, verbose_name='Время приготовления')
     title = models.CharField(max_length=200, verbose_name='Название рецепта')
 
     def __str__(self):

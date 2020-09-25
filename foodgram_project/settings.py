@@ -24,12 +24,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = '$s!yk@g+zg)6m%t3t5f+g7mvd0u$le(2=)jtov9@9nqyksw@9u'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["localhost",
     "127.0.0.1",
     "[::1]",
-    "testserver",]
+    "testserver", 
+    "130.193.39.75",
+    "schera-praktikum.tk",
+    "www.schera-praktikum.tk",
+
+    ]
 
 
 # Application definition
@@ -88,11 +93,14 @@ WSGI_APPLICATION = 'foodgram_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-# Переведу на постгри к следующей итерации
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('POSTGRES_USER'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT'),
     }
 }
 
