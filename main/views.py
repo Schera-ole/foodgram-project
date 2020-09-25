@@ -143,13 +143,13 @@ def get_shoplist(request):
     content = ''
     users_recipe = ShopList.objects.filter(user=request.user)
     recipe = [recipe.recipe for recipe in users_recipe]
-    amount = (IngredientAmount.objects.filter(
+    amount = IngredientAmount.objects.filter(
         recipe__in=recipe
-        ).values(
+    ).values(
         'ingredient__title', 'ingredient__dimension'
-        ).annotate(
+    ).annotate(
         Sum('amount')
-        ))
+    )
     for a in amount:
         title, dimension, amount_sum = a.values()
         content = content + f'{title} {amount_sum} {dimension}\n'
@@ -225,10 +225,9 @@ def del_favorite(request, recipe_id):
 def follow(request):
     author = list(User.objects.filter(
         following__user=request.user
-        ).annotate(
-        count = Count(
-        'recipe_author'
-        )))
+    ).annotate(
+        count = Count
+    ('recipe_author')))
     paginator = Paginator(author, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
